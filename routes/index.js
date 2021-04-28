@@ -76,4 +76,12 @@ router.post('/book', async function(req, res) {
   res.redirect('/')
 })
 
+// Cancel a booking
+router.get('/cancel/:id', async function(req, res) {
+  if (req.session.user) {
+    await axios.delete(`${apiUrl}/api/SessionBookingsAPI/${req.params.id}`)
+  }
+  res.redirect('/')
+})
+
 module.exports = router;

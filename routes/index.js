@@ -35,7 +35,8 @@ router.get('/', async function(req, res, next) {
     return res.render('bookings', {
       title: 'MaxFitness App - Bookings',
       timeslots,
-      dayFormat: `${session.getDate()}/${session.getMonth()}/${session.getFullYear()}`
+      dayFormat: `${session.getDate()}/${session.getMonth()}/${session.getFullYear()}`,
+      username: req.session.user.userName
     });
   }
   res.render('index', { title: 'MaxFitness App' });

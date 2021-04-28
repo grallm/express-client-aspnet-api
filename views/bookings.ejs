@@ -16,7 +16,7 @@
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Today</a>
+              <a class="nav-link active" aria-current="page" href="#">Tomorrow</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" aria-current="page" href="#">All Bookings</a>
@@ -27,23 +27,33 @@
       </div>
     </nav>
 
-    <div class="container pt-3">
+    <div class="container py-3">
+      <h3><%= dayFormat %></h3>
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
             <th scope="col">Start time</th>
             <th scope="col">End time</th>
             <th scope="col">Cancel</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td><a class="btn btn-sm btn-danger">Cancel</a></td>
-          </tr>
+          <% timeslots.forEach(timeslot => { %>
+            <tr>
+              <td><%= timeslot.start %></td>
+              <td><%= timeslot.end %></td>
+              <td>
+                <% if (timeslot.booked) { %> 
+                  <a class="btn btn-sm btn-danger" href="/cancel/<%= timeslot.sessionId %> ">Cancel</a>
+                <% } else { %>
+                  <form action="book" method="POST">
+                    <input type="hidden" value="<%= timeslot.startDate %>" name="startDate" />
+                    <input type="submit" class="btn btn-sm btn-success" value="Book" />
+                  </form>
+                <% } %> 
+              </td>
+            </tr>
+          <% }); %>
         </tbody>
       </table>
     </div>

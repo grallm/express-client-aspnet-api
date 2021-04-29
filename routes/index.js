@@ -2,7 +2,7 @@ const axios = require('axios')
 var express = require('express');
 var router = express.Router();
 
-const apiUrl = 'http://localhost:5000'
+const apiUrl = process.env.API_URL
 
 /* GET home page. */
 router.get('/', async function(req, res, next) {

@@ -1,4 +1,5 @@
 const axios = require('axios')
+const moment = require('moment')
 var express = require('express');
 var router = express.Router();
 
@@ -10,23 +11,25 @@ router.get('/', async function(req, res, next) {
     const bookings = (await axios.get(`${apiUrl}/api/SessionBookingsAPI/`)).data
     const timeslots = []
 
-    const session = new Date()
-    session.setDate(session.getDate() + 1)
-    session.setMilliseconds(0)
-    session.setSeconds(0)
-    session.setMinutes(0)
+    const session = moment()
+    session.set({
+      minute: 0,
+      second: 0,
+      millisecond: 0
+    })
+    session.add(1, 'd')
 
     for (let i=6; i<22; i++) {
-      session.setHours(i)
+      session.set('h', i)
       const booking = bookings.find(booking => booking.userId === req.session.user.id && new Date(booking.startTime).valueOf() === session.valueOf())
 
-      const endDate = new Date(session)
-      endDate.setHours(endDate.getHours()+1)
+      const endDate = session.clone()
+      endDate.add(1, 'h')
 
       timeslots.push({
-        start: `${session.getHours()}:00`,
-        startDate: endDate.toISOString(),
-        end: `${session.getHours()+1}:00`,
+        start: `${session.hour()}:00`,
+        startDate: session.format(),
+        end: `${endDate.hour()}:00`,
         booked: !!booking,
         sessionId: booking ? booking.sessionBookingId : -1
       })
@@ -35,7 +38,7 @@ router.get('/', async function(req, res, next) {
     return res.render('bookings', {
       title: 'MaxFitness App - Bookings',
       timeslots,
-      dayFormat: `${session.getDate()}/${session.getMonth()}/${session.getFullYear()}`,
+      dayFormat: `${session.day()}/${session.month()}/${session.year()}`,
       username: req.session.user.userName
     });
   }
@@ -63,14 +66,14 @@ router.post('/login', async function(req, res) {
 // Book timeslot
 router.post('/book', async function(req, res) {
   const startDate = req.body.startDate
-  const endDate = new Date(startDate)
-  endDate.setHours(endDate.getHours() + 1)
+  const endDate = moment(startDate)
+  endDate.add('h', 1)
 
   if (req.session.user && req.body.startDate) {
     await axios.post(`${apiUrl}/api/SessionBookingsAPI/`, {
       userId: req.session.user.id,
       startTime: startDate,
-      endTime: endDate.toISOString()
+      endTime: endDate.format()
     })
   }
 

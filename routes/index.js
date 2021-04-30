@@ -67,7 +67,7 @@ router.post('/login', async function(req, res) {
 router.post('/book', async function(req, res) {
   const startDate = req.body.startDate
   const endDate = moment(startDate)
-  endDate.add('h', 1)
+  endDate.add(1, 'h')
 
   if (req.session.user && req.body.startDate) {
     await axios.post(`${apiUrl}/api/SessionBookingsAPI/`, {
